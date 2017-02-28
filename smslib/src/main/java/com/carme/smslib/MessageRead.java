@@ -12,15 +12,17 @@ import android.telephony.SubscriptionManager;
 import android.util.Log;
 
 public class MessageRead extends BroadcastReceiver {
-    private static final String ACTION_SMS_RECEIVER = "android.provider.Telephony.SMS_RECEIVED";
+    public static final String ACTION_SMS_RECEIVER = "android.provider.Telephony.SMS_RECEIVED";
 
-    public MessageRead() {
-
+    private MessageCallBack mCallBack ;
+    public MessageRead(MessageCallBack callBack) {
+        mCallBack = callBack;
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
         // TODO: This method is called when the BroadcastReceiver is receiving
+        Log.d("sss","receive!!");
         // an Intent broadcast.
         if(ACTION_SMS_RECEIVER.equals(intent.getAction())) {
             Bundle bundle = intent.getExtras();
@@ -34,11 +36,15 @@ public class MessageRead extends BroadcastReceiver {
 
                 for (SmsMessage sms: smsArr) {
                     if(sms != null) {
-                        Log.d("sss",sms.getMessageBody());
+                        mCallBack.callBack(sms);
                     }
                 }
             }
         }
+    }
+
+    public interface MessageCallBack{
+        void callBack(SmsMessage message);
     }
 
     public static SmsMessage[] getMessagesFromIntent(Intent intent) {
